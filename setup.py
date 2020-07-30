@@ -1,3 +1,4 @@
+from builtins import *
 import os
 import sys
 import pathlib
@@ -9,23 +10,24 @@ __author__ = 'Craigstar'
 __date__ = '2019/06/15'
 
 
-class CMakeExtension(Extension):
-    def __init__(self, name):
-        # don't invoke the original build_ext for this special extension
-        super().__init__(name, sources=[])
+# class CMakeExtension(Extension):
+#     def __init__(self, name):
+#         # don't invoke the original build_ext for this special extension
+#         # super().__init__(name, sources=[])
+#         Extension.__init__(name, sources={})
 
 
 class build_ext(build_ext_orig):
     def run(self):
         for ext in self.extensions:
             self.build_cmake(ext)
-        super().run()
+        #super().run()
 
     def build_cmake(self, ext):
         cwd = pathlib.Path().absolute()
 
         build_temp = pathlib.Path(self.build_temp)
-        build_temp.mkdir(parents=True, exist_ok=True)
+        build_temp.mkdir(parents=True)
         extdir = pathlib.Path(self.get_ext_fullpath(ext.name))
 
         # example of cmake args
@@ -69,7 +71,7 @@ setup(
         "Programming Language :: Python :: 3",
         "Operating System :: OS Independent",
     ],
-    ext_modules=[CMakeExtension('sophus/sophuspy')],
+    ext_modules=[Extension('sophus/sophuspy', sources=[])],
     cmdclass={
         'build_ext': build_ext,
     }
